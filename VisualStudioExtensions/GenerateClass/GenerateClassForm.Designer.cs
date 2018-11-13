@@ -1,4 +1,4 @@
-﻿namespace VisualStudioExtensions
+﻿namespace VisualStudioExtensions.GenerateClass
 {
     partial class GenerateClassForm
     {

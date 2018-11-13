@@ -1,16 +1,24 @@
 ﻿using System;
 using System.ComponentModel.Design;
 using System.Globalization;
+using EnvDTE;
+using EnvDTE80;
+using Microsoft;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using VisualStudioExtensions.GenerateClass;
 
 namespace VisualStudioExtensions
 {
+
     /// <summary>
     /// Command handler
     /// </summary>
     internal sealed class GenerateClassCommand
     {
+
+        #region <Generated>
+
         /// <summary>
         /// Command ID.
         /// </summary>
@@ -85,25 +93,32 @@ namespace VisualStudioExtensions
         /// </summary>
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event args.</param>
+
+        #endregion
+         
+        IGenerateClassInputDataProvider _inputDataProvider = new GenerateClassInputDataProvider();
+        IClassGeneratorEngine _classGeneratorEngine = new ClassGeneratorEngine(new PropertyTypeResolver());
+
         private void MenuItemCallback(object sender, EventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
 
-            var form = new GenerateClassForm();
-            form.ShowDialog();
+            var dte = (DTE2)ServiceProvider.GetService(typeof(DTE));
+            Assumes.Present(dte);
 
+            var document = dte.ActiveDocument;
+            var textDocument = document.Object() as TextDocument;
+            var selection = textDocument.Selection;
+            var selectionText = selection.Text;
 
+            var inputData = _inputDataProvider.GetInputData(selectionText);
+            var code = _classGeneratorEngine.Generate(inputData.ClassName, inputData.PropertyNames);
 
-            string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
-            string title = "GenerateClassCommand";
+            var joined = Environment.NewLine + string.Join(Environment.NewLine, code);
 
-            // Show a message box to prove we were here
-            VsShellUtilities.ShowMessageBox(
-                this.ServiceProvider,
-                message,
-                title,
-                OLEMSGICON.OLEMSGICON_INFO,
-                OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+            var editPoint = textDocument.CreateEditPoint(selection.BottomPoint);
+            editPoint.Insert(joined);
         }
+
     }
 }

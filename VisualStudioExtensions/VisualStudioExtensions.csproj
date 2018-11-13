@@ -56,13 +56,21 @@
   <ItemGroup>
     <Compile Include="GenerateClassCommand.cs" />
     <Compile Include="GenerateClassCommandPackage.cs" />
+    <Compile Include="GenerateClass\ClassGeneratorEngine.cs" />
     <Compile Include="GenerateClass\GenerateClassForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="GenerateClass\GenerateClassForm.Designer.cs">
       <DependentUpon>GenerateClassForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="GenerateClass\GenerateClassInputData.cs" />
+    <Compile Include="GenerateClass\GenerateClassInputDataProvider.cs" />
+    <Compile Include="GenerateClass\IClassGeneratorEngine.cs" />
+    <Compile Include="GenerateClass\IGenerateClassInputDataProvider.cs" />
+    <Compile Include="GenerateClass\IPropertyTypeResolver.cs" />
+    <Compile Include="GenerateClass\PropertyTypeResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shared\CSharpExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
